@@ -1,1 +1,1 @@
-A container image for a generic IOC to support delta tau motion controllers.
+A container image for a generic IOC for Simulated Motors.
