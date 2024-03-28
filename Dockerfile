@@ -47,8 +47,12 @@ RUN motor/install.sh R7-3-1
 COPY ibek-support/motorMotorSim/ motorMotorSim/
 RUN motorMotorSim/install.sh R1-2
 
-# create IOC source tree, generate Makefile and compile IOC Instance
-RUN ibek ioc build
+# get the ioc source and build it
+COPY ioc ${SOURCE_FOLDER}/ioc
+RUN cd ${IOC} && ./install.sh && make
+
+# install runtime proxy for non-native builds
+RUN bash ${IOC}/install_proxy.sh
 
 ##### runtime preparation stage ################################################
 FROM developer AS runtime_prep
