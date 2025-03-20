@@ -1,6 +1,6 @@
 ARG IMAGE_EXT
 
-ARG BASE=7.0.9ec2
+ARG BASE=7.0.9ec3
 ARG REGISTRY=ghcr.io/epics-containers
 ARG RUNTIME=${REGISTRY}/epics-base${IMAGE_EXT}-runtime:${BASE}
 ARG DEVELOPER=${REGISTRY}/epics-base${IMAGE_EXT}-developer:${BASE}
@@ -20,39 +20,39 @@ RUN pip install --upgrade -r requirements.txt
 
 WORKDIR ${SOURCE_FOLDER}/ibek-support
 
-# copy the global ibek files
-COPY ibek-support/_global/ _global
+COPY ibek-support/_ansible _ansible
+ENV PATH=$PATH:${SOURCE_FOLDER}/ibek-support/_ansible
 
 COPY ibek-support/iocStats/ iocStats
-RUN iocStats/install.sh 3.2.0
+RUN ansible.sh iocStats
+
+COPY ibek-support/pvlogging/ pvlogging/
+RUN ansible.sh pvlogging
+
+COPY ibek-support/autosave/ autosave
+RUN ansible.sh autosave
 
 COPY ibek-support/asyn/ asyn/
-RUN asyn/install.sh R4-42
-
-COPY ibek-support/autosave/ autosave/
-RUN autosave/install.sh R5-11
+RUN ansible.sh asyn
 
 COPY ibek-support/busy/ busy/
-RUN busy/install.sh R1-7-3
+RUN ansible.sh busy
 
 COPY ibek-support/sscan/ sscan/
-RUN sscan/install.sh R2-11-6
+RUN ansible.sh sscan
 
 COPY ibek-support/calc/ calc/
-RUN calc/install.sh R3-7-5
+RUN ansible.sh calc
 
 COPY ibek-support/motor/ motor/
-RUN motor/install.sh R7-3-1
+RUN ansible.sh motor
 
 COPY ibek-support/motorMotorSim/ motorMotorSim/
-RUN motorMotorSim/install.sh R1-2
+RUN ansible.sh motorMotorSim
 
 # get the ioc source and build it
 COPY ioc ${SOURCE_FOLDER}/ioc
-RUN cd ${IOC} && ./install.sh && make
-
-# install runtime proxy for non-native builds
-RUN bash ${IOC}/install_proxy.sh
+RUN ansible.sh ioc
 
 ##### runtime preparation stage ################################################
 FROM developer AS runtime_prep
