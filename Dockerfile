@@ -70,4 +70,4 @@ COPY --from=runtime_prep /assets /
 RUN ibek support apt-install-runtime-packages
 
 # launch the startup script with stdio-expose to allow console connections
-CMD ["bash", "-c", "stdio-expose ${IOC}/start.sh"]
+CMD ["bash", "-c", "${IOC}/start.sh"]
