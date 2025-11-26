@@ -1,9 +1,12 @@
 ARG IMAGE_EXT
 
-ARG BASE=7.0.9ec4
 ARG REGISTRY=ghcr.io/epics-containers
-ARG RUNTIME=${REGISTRY}/epics-base${IMAGE_EXT}-runtime:${BASE}
-ARG DEVELOPER=${REGISTRY}/epics-base${IMAGE_EXT}-developer:${BASE}
+ARG RUNTIME=${REGISTRY}/epics-base${IMAGE_EXT}-runtime:7.0.9ec5
+ARG DEVELOPER=${REGISTRY}/epics-base${IMAGE_EXT}-developer:7.0.9ec5
+# for pre-built common support and faster builds of this generic IOC:
+# - change above to￼DEVELOPER=${REGISTRY}/ioc-asyn${IMAGE_EXT}-developer:4.45ec2
+# - comment out uv pip install lines below (unless a newer ibek is needed)
+# - remove ansible.sh lines for all support modules provided by ioc-asyn
 
 ##### build stage ##############################################################
 FROM  ${DEVELOPER} AS developer
@@ -58,7 +61,7 @@ RUN ansible.sh ioc
 FROM developer AS runtime_prep
 
 # get the products from the build stage and reduce to runtime assets only
-# TODO /python is created by uv - add to apt-install-runtime-packages' defaults
+# /python is created by uv and is needed in the runtime target
 RUN ibek ioc extract-runtime-assets /assets /python
 
 ##### runtime stage ############################################################
