@@ -6,4 +6,4 @@ git_platform: github.com
 github_org: epics-containers
 name: ioc-motorsim
 repo_uri: git@github.com:epics-containers/ioc-motorsim.git
-rtems: true
+rtems: false
