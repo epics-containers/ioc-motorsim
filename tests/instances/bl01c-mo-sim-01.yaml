@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../ioc.schema.json
+# Copied from https://gitlab.diamond.ac.uk/controls/containers/beamline/b01-1-services
+# services/bl01c-mo-sim-01/config/ioc.yaml at commit cc8a2a3b2db38b4fa2abc06141b096c3f75dc1f3
+# Unchanged: it has no device addresses or passwords.
+# tests/run-tests.sh runs it with start.sh --test, which generates the
+# runtime assets but does not launch the IOC.
+
+ioc_name: "{{ _global.get_env('IOC_NAME') }}"
+
+description: REPLACE WITH DESCRIPTION
+
+entities:
+  - type: epics.EpicsEnvSet
+    name: EPICS_TZ
+    value: GMT0BST
+
+  - type: devIocStats.iocAdminSoft
+    IOC: "{{ ioc_name | upper }}"
+
+  - type: pvlogging.PvLogging
+
+  - type: autosave.Autosave
+    P: "BL01C-MO-SIM-01:"
+
+  - type: motorSim.simMotorController
+    controllerName: sim-controller1
+    numAxes: 3
+    P: "BL01C-MO-SIMC-01:"
+
+  - type: motorSim.simMotorAxis
+    controller: sim-controller1
+    ADDR: 1
+    M: M1
+    DESC: Motor 1
+    home: 1
+
+  - type: motorSim.simMotorAxis
+    controller: sim-controller1
+    ADDR: 2
+    M: M2
+    DESC: Motor 2
+    home: 2
